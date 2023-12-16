@@ -14,15 +14,17 @@ namespace B_A_Software
     public partial class BillView : Form
     {
         List<MenüItem> Warenkorb = new List<MenüItem>();
-        public BillView(List<MenüItem> Waren)
+        int tischnummer_;
+        public BillView(List<MenüItem> Waren, int tischnummer)
         {
             this.Warenkorb = Waren;
             InitializeComponent();
+            tischnummer_ = tischnummer;
         }
 
         private void TogetherBillBtn_Click(object sender, EventArgs e)
         {
-            TogetherBillView togetherbillview = new TogetherBillView(Warenkorb);
+            TogetherBillView togetherbillview = new TogetherBillView(Warenkorb, tischnummer_);
 
             this.Hide();
 
@@ -34,26 +36,14 @@ namespace B_A_Software
 
         private void SplitBillBtn_Click(object sender, EventArgs e)
         {
-            SplitBillView splitbillview = new SplitBillView(Warenkorb);
-
             this.Hide();
-
-            if (splitbillview.ShowDialog() == DialogResult.OK)
-            {
-
-            }
+            new SplitBillView(Warenkorb, tischnummer_).ShowDialog();
         }
 
         private void BackBtn_Click(object sender, EventArgs e)
         {
-            AreaSelect areaselect = new AreaSelect();
-
             this.Hide();
-
-            if (areaselect.ShowDialog() == DialogResult.OK)
-            {
-
-            }
+            new TableView(tischnummer_, Warenkorb).ShowDialog();
         }
     }
 }

@@ -22,7 +22,7 @@ namespace B_A_Software
             //dataCommand.Connection = dataConnection;
             //dataCommand.CommandText = commandString;
 
-            string strTemp = @"Provider = Microsoft.ACE.OLEDB.12.0; Data Source=H:\\Documents\\LF_11\\B&A Projekt\\B&A-Software\\B&A-Software\\bin\\Debug\\B&A_DB.accdb";
+            string strTemp = @$"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={Directory.GetCurrentDirectory()}\B&A_DB.accdb";
             OleDbConnection dataConnection = new OleDbConnection(strTemp);
 
             try
@@ -47,7 +47,7 @@ namespace B_A_Software
         {
             var tischliste = new List<Tisch>();
 
-            string dbConnectionString = @"Provider = Microsoft.ACE.OLEDB.12.0; Data Source=H:\\Documents\\LF_11\\B&A Projekt\\B&A-Software\\B&A-Software\\bin\\Debug\\B&A_DB.accdb";
+            string dbConnectionString = @$"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={Directory.GetCurrentDirectory()}\B&A_DB.accdb";
             using (OleDbConnection dataConnection = new OleDbConnection(dbConnectionString))
             {
 
@@ -76,7 +76,7 @@ namespace B_A_Software
         public static Tisch GetTable(int tischId)
         {
             Tisch neuerTisch = new Tisch();
-            string dbConnectionString = @"Provider = Microsoft.ACE.OLEDB.12.0; Data Source=H:\\Documents\\LF_11\\B&A Projekt\\B&A-Software\\B&A-Software\\bin\\Debug\\B&A_DB.accdb";
+            string dbConnectionString = @$"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={Directory.GetCurrentDirectory()}\B&A_DB.accdb";
             using (OleDbConnection dataConnection = new OleDbConnection(dbConnectionString))
             {
 

@@ -31,6 +31,7 @@ namespace B_A_Software
 
         private void TableBtn1_Click(object sender, EventArgs e)
         {
+            // TODO : Form anpassen in schöne
             TableView tableview = new TableView((bereich_ - 1) * 5 + 1, Warenkorb);
 
             this.Hide();
@@ -67,14 +68,8 @@ namespace B_A_Software
 
         private void TableBtn4_Click(object sender, EventArgs e)
         {
-            TableView tableview = new TableView((bereich_ - 1) * 5 + 4, Warenkorb);
-
             this.Hide();
-
-            if (tableview.ShowDialog() == DialogResult.OK)
-            {
-
-            }
+            new TableView((bereich_ - 1) * 5 + 4, Warenkorb).ShowDialog();
         }
 
         private void TableBtn5_Click(object sender, EventArgs e)

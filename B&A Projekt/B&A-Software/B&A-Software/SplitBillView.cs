@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Data.OleDb;
 using System.Drawing;
 using System.Drawing.Printing;
 using System.Linq;
@@ -14,51 +15,118 @@ namespace B_A_Software
 {
     public partial class SplitBillView : Form
     {
+        string strTemp = @$"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={Directory.GetCurrentDirectory()}\B&A_DB.accdb";
+        private List<MenüItem> speisenliste;
         List<MenüItem> Warenkorb = new List<MenüItem>();
-        public SplitBillView(List<MenüItem> Waren)
+        int tischnummer_;
+        int mitarbeiterID;
+        public SplitBillView(List<MenüItem> Waren, int tischnummer)
         {
             this.Warenkorb = Waren;
             InitializeComponent();
+            tischnummer_ = tischnummer;
+            speisenliste = LoadData();
+            ShowData();
+            mitarbeiterID = LoadMitarbeiter();
         }
 
-        private void textBox1_TextChanged(object sender, EventArgs e)
+        private void ShowData()
         {
-
+            foreach (var item in Warenkorb)
+            {
+                OrderListBox.Items.Add(item.Speisenname);
+            }
         }
 
-        private void PayLab_Click(object sender, EventArgs e)
+        private int LoadMitarbeiter()
         {
-
+            int mitarbeiterID_;
+            using (OleDbConnection dataConnection = new OleDbConnection(strTemp))
+            {
+                dataConnection.Open();
+                using (OleDbCommand dataCommand = dataConnection.CreateCommand())
+                {
+                    dataCommand.Connection = dataConnection;
+                    dataCommand.CommandText = @$"
+                        SELECT 
+                            MitarbeiterID 
+                        FROM Tisch 
+                        WHERE 
+                            TischID = {tischnummer_};";
+                    using (var reader = dataCommand.ExecuteReader())
+                    {
+                        reader.Read();
+                        mitarbeiterID_ = reader.GetInt32(0);
+                    }
+                }
+            }
+            return mitarbeiterID_;
         }
 
-        private void OrderLab_Click(object sender, EventArgs e)
+        private List<MenüItem> LoadData()
         {
+            using (OleDbConnection dataConnection = new OleDbConnection(strTemp))
+            {
+                List<MenüItem> speisenListeLocal = new List<MenüItem>();
 
+                    dataConnection.Open();
+
+                using (OleDbCommand dataCommand = dataConnection.CreateCommand())
+                {
+                    dataCommand.Connection = dataConnection;
+                    dataCommand.CommandText = "Select MenüItemID, Kategorie, Speisenname, Preis, Beschreibung From MenüItem;";
+                    using (var reader = dataCommand.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            MenüItem newItem = new MenüItem();
+                            newItem.MenüItemID = reader.GetInt32(0);
+                            newItem.Ketegorie = reader.GetString(1);
+                            newItem.Speisenname = reader.GetString(2);
+                            newItem.Preis = reader.GetValue(3).ToString();
+                            newItem.Beschreibung = reader.GetValue(4).ToString();
+                            speisenListeLocal.Add(newItem);
+                        }
+                    }
+                }
+                return speisenListeLocal;
+            }
         }
 
         private void BackBtn_Click(object sender, EventArgs e)
         {
-            BillView billview = new BillView(Warenkorb);
-
             this.Hide();
-
-            if (billview.ShowDialog() == DialogResult.OK)
-            {
-
-            }
+            new BillView(Warenkorb, tischnummer_).ShowDialog();
         }
 
         private void OrderListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            //foreach (var item in )
-            //{
-            //    OrderListBox.Items.Add(item.Speisenname);
-            //}
+            if (OrderListBox.SelectedIndex != -1)
+            {
+                string selectedText = OrderListBox.SelectedItem.ToString();
+                PayListBox.Items.Add(selectedText);
+                OrderListBox.Items.RemoveAt(OrderListBox.SelectedIndex);
+            }
+            // TODO : Betrag berechnen anhand von PayListBox
+            double betrag = 0.0;
+            foreach (string item in PayListBox.Items)
+            {
+                betrag += Convert.ToDouble(GetMenuItemFromString(item).Preis);
+            }
+            string betragString = betrag.ToString();
+            decimal betragDecimal = decimal.Parse(betragString);
+            string text = betragDecimal.ToString("N2");
+            this.AmountTxtBox.Text = text;
         }
 
         private void PayListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-
+            if (PayListBox.SelectedIndex != -1)
+            {
+                string selectedText = PayListBox.SelectedItem.ToString();
+                OrderListBox.Items.Add(selectedText);
+                PayListBox.Items.RemoveAt(PayListBox.SelectedIndex);
+            }
         }
 
         private void PrintBtn_Click(object sender, EventArgs e)
@@ -68,6 +136,7 @@ namespace B_A_Software
             string header = "Rechnung\r\n\r\n\n";
             stringToPrint += $"Datum: {DateTime.Now.ToString()}\r\n";
             stringToPrint += $"Tisch: dummy\r\n";
+            // TODO : implementieren
 
             //var billedItems = notpayed.selledItems;
 
@@ -99,6 +168,95 @@ namespace B_A_Software
             {
                 docToPrint.Print();
             }
+        }
+
+        private void SplitPayBtn_Click(object sender, EventArgs e)
+        {
+            List<MenüItem> menuitems = new List<MenüItem>();
+            foreach (var item in PayListBox.Items)
+            {
+                var item_ = GetMenuItemFromString((string)item);
+                menuitems.Add(item_);
+            }
+
+            using (OleDbConnection dataConnection = new OleDbConnection(strTemp))
+            {
+                dataConnection.Open();
+                foreach (var item in menuitems)
+                {
+                    int rechnungID;
+                    int bestellungID;
+
+                    // Erste Bestellung des Tisches mit dem Entsprechenden Menütimem holen
+                    using (OleDbCommand dataCommand = dataConnection.CreateCommand())
+                    {
+                        dataCommand.Connection = dataConnection;
+                        dataCommand.CommandText = @$"
+                                SELECT
+                                    BestellungID
+                                FROM
+                                    Bestellung
+                                WHERE TischID = {tischnummer_}
+                                AND MenüItemID = {item.MenüItemID}
+                                AND Bedient = false;";
+                        using (OleDbDataReader reader = dataCommand.ExecuteReader())
+                        {
+                            reader.Read();
+                            bestellungID = reader.GetInt32(0);
+                        }
+                    }
+
+                    // Einfügen in Rechnung
+                    using (OleDbCommand dataCommand = dataConnection.CreateCommand())
+                    {
+                        dataCommand.Connection = dataConnection;
+                        DateTime theDate = DateTime.Now;
+                        dataCommand.CommandText = @$"
+                            INSERT INTO Rechnung(
+                                Trinkgeld,
+                                Betrag,
+                                Datum,
+                                MitarbeiterID)
+                            VALUES(
+                                {Convert.ToInt32(TipTxtBox.Text)},
+                                {Convert.ToInt32(Convert.ToDouble(AmountTxtBox.Text) * 100)},
+                                @mydate,
+                                {mitarbeiterID});";
+                        dataCommand.Parameters.Add("@mydate", OleDbType.Date).Value = theDate;
+                        dataCommand.ExecuteNonQuery();
+
+                        // ID wieder auslesen
+                        dataCommand.Parameters.Clear();
+                        dataCommand.CommandText = "SELECT @@IDENTITY";
+                        rechnungID = Convert.ToInt32(dataCommand.ExecuteScalar());
+                    }
+
+                    // Bestellung updaten
+                    using (OleDbCommand dataCommand = dataConnection.CreateCommand())
+                    {
+                        dataCommand.Connection = dataConnection;
+                        dataCommand.CommandText = @$"
+                                UPDATE Bestellung(
+                                SET 
+                                    Bedient = true, 
+                                    RechnungID = {rechnungID}
+                                WHERE BestellungID = {bestellungID}";
+                        dataCommand.ExecuteNonQuery();
+                    }
+                }
+                Warenkorb.Remove(Warenkorb.FirstOrDefault(item => item.MenüItemID == item.MenüItemID));
+            }
+            // die strings wieder in positionen (bestellungen) umwandeln für den tisch
+            // ==> liste daraus erstellen
+            // foreach item in liste 
+            // daten aus Bestellung löschen und daten in Rechnung eintragen
+            // Warenkorb anpassen
+        }
+
+        private MenüItem GetMenuItemFromString(string speisenName)
+        {
+            var speise = speisenliste.FirstOrDefault(x => x.Speisenname == speisenName);
+            return speise;
         }
     }
 }

@@ -14,7 +14,7 @@ namespace B_A_Software
 {
     public partial class OrderView : Form
     {
-        string strTemp = @"Provider = Microsoft.ACE.OLEDB.12.0; Data Source=H:\\Documents\\LF_11\\B&A Projekt\\B&A-Software\\B&A-Software\\bin\\Debug\\B&A_DB.accdb";
+        string strTemp = @$"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={Directory.GetCurrentDirectory()}\B&A_DB.accdb";
         List<MenüItem> Warenkorb = new List<MenüItem>();
         List<MenüItem> speisenListe = new List<MenüItem>();
         int tischnummer_;
@@ -29,7 +29,7 @@ namespace B_A_Software
 
         private void LoadFood()
         {
-            string strTemp = @"Provider = Microsoft.ACE.OLEDB.12.0; Data Source=H:\\Documents\\LF_11\\B&A Projekt\\B&A-Software\\B&A-Software\\bin\\Debug\\B&A_DB.accdb";
+            string strTemp = @$"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={Directory.GetCurrentDirectory()}\B&A_DB.accdb";
             using OleDbConnection dataConnection = new OleDbConnection(strTemp);
             List<MenüItem> speisenListeLocal = new List<MenüItem>();
 
@@ -66,7 +66,7 @@ namespace B_A_Software
 
         private void LoadDrinks()
         {
-            string strTemp = @"Provider = Microsoft.ACE.OLEDB.12.0; Data Source=H:\\Documents\\LF_11\\B&A Projekt\\B&A-Software\\B&A-Software\\bin\\Debug\\B&A_DB.accdb";
+            string strTemp = @$"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={Directory.GetCurrentDirectory()}\B&A_DB.accdb";
             using OleDbConnection dataConnection = new OleDbConnection(strTemp);
             List<MenüItem> speisenListeLocal = new List<MenüItem>();
 
@@ -126,26 +126,12 @@ namespace B_A_Software
 
         private void BackBtn_Click(object sender, EventArgs e)
         {
-            AreaSelect areaselect = new AreaSelect();
-
             this.Hide();
-
-            if (areaselect.ShowDialog() == DialogResult.OK)
-            {
-
-            }
+            new TableView(tischnummer_, Warenkorb).ShowDialog();
         }
 
         private void OrderBtn_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Bestellung aufgegeben");
-
-            // TODO: in DB schreiben
-
-
-
-
-
             using (OleDbConnection dataConnection = new OleDbConnection(strTemp))
             {
                 dataConnection.Open();
@@ -155,6 +141,7 @@ namespace B_A_Software
                     using (OleDbCommand dataCommand = dataConnection.CreateCommand())
                     {
                         dataCommand.Connection = dataConnection;
+                        DateTime theDate = DateTime.Now;
                         foreach (var item in Warenkorb)
                         {
                             dataCommand.CommandText = @$"
@@ -167,15 +154,17 @@ namespace B_A_Software
                                 RechnungID)
                             VALUES(
                                 '{tbExtras.Text}',
-                                true,
-                                {DateTime.Now.ToString("yyyy-MM-dd")},
+                                false,
+                                @mydate,
                                 {tischnummer_},
                                 {item.MenüItemID},
                                 0
                             )";
+                            dataCommand.Parameters.Add("@mydate", OleDbType.Date).Value = theDate;
                             dataCommand.ExecuteNonQuery();
                         }
                     }
+                    MessageBox.Show("Bestellung aufgegeben");
                 }
                 catch (Exception)
                 {
@@ -187,9 +176,8 @@ namespace B_A_Software
                     dataConnection.Close();
                 }
             }
-            TableView tableview = new TableView(tischnummer_, Warenkorb);
-            tableview.Show();
             this.Hide();
+            new TableView(tischnummer_, Warenkorb).ShowDialog();
         }
 
         private void FoodListBox_SelectedIndexChanged(object sender, EventArgs e, OleDbConnection connection)
@@ -214,7 +202,7 @@ namespace B_A_Software
 
                 WKListBox.Items.Add(selectedText);
 
-                var toAdd = GetMenuItemFromString(FoodListBox.SelectedItem.ToString());
+                var toAdd = GetMenuItemFromString(DrinksListBox.SelectedItem.ToString());
                 if (toAdd != null)
                     Warenkorb.Add(toAdd);
             }

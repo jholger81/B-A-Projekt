@@ -46,9 +46,10 @@
             // PrintBtn
             // 
             PrintBtn.Font = new Font("Segoe UI", 15F, FontStyle.Regular, GraphicsUnit.Point);
-            PrintBtn.Location = new Point(659, 337);
+            PrintBtn.Location = new Point(1224, 719);
+            PrintBtn.Margin = new Padding(6);
             PrintBtn.Name = "PrintBtn";
-            PrintBtn.Size = new Size(129, 101);
+            PrintBtn.Size = new Size(240, 215);
             PrintBtn.TabIndex = 0;
             PrintBtn.Text = "Drucken";
             PrintBtn.UseVisualStyleBackColor = true;
@@ -57,62 +58,67 @@
             // OrderListBox
             // 
             OrderListBox.FormattingEnabled = true;
-            OrderListBox.ItemHeight = 15;
-            OrderListBox.Location = new Point(38, 83);
+            OrderListBox.ItemHeight = 32;
+            OrderListBox.Location = new Point(71, 177);
+            OrderListBox.Margin = new Padding(6);
             OrderListBox.Name = "OrderListBox";
-            OrderListBox.Size = new Size(235, 334);
+            OrderListBox.Size = new Size(433, 708);
             OrderListBox.TabIndex = 1;
             OrderListBox.SelectedIndexChanged += OrderListBox_SelectedIndexChanged;
             // 
             // PayListBox
             // 
             PayListBox.FormattingEnabled = true;
-            PayListBox.ItemHeight = 15;
-            PayListBox.Location = new Point(296, 79);
+            PayListBox.ItemHeight = 32;
+            PayListBox.Location = new Point(550, 169);
+            PayListBox.Margin = new Padding(6);
             PayListBox.Name = "PayListBox";
-            PayListBox.Size = new Size(235, 334);
+            PayListBox.Size = new Size(433, 708);
             PayListBox.TabIndex = 2;
             PayListBox.SelectedIndexChanged += PayListBox_SelectedIndexChanged;
             // 
             // SplitPayBtn
             // 
             SplitPayBtn.Font = new Font("Segoe UI", 15F, FontStyle.Regular, GraphicsUnit.Point);
-            SplitPayBtn.Location = new Point(659, 220);
+            SplitPayBtn.Location = new Point(1224, 469);
+            SplitPayBtn.Margin = new Padding(6);
             SplitPayBtn.Name = "SplitPayBtn";
-            SplitPayBtn.Size = new Size(129, 101);
+            SplitPayBtn.Size = new Size(240, 215);
             SplitPayBtn.TabIndex = 3;
             SplitPayBtn.Text = "Bezahlen";
             SplitPayBtn.UseVisualStyleBackColor = true;
+            SplitPayBtn.Click += SplitPayBtn_Click;
             // 
             // OrderLab
             // 
             OrderLab.AutoSize = true;
             OrderLab.Font = new Font("Segoe UI", 15F, FontStyle.Regular, GraphicsUnit.Point);
-            OrderLab.Location = new Point(38, 48);
+            OrderLab.Location = new Point(71, 102);
+            OrderLab.Margin = new Padding(6, 0, 6, 0);
             OrderLab.Name = "OrderLab";
-            OrderLab.Size = new Size(75, 28);
+            OrderLab.Size = new Size(153, 54);
             OrderLab.TabIndex = 4;
             OrderLab.Text = "Bestellt";
-            OrderLab.Click += OrderLab_Click;
             // 
             // PayLab
             // 
             PayLab.AutoSize = true;
             PayLab.Font = new Font("Segoe UI", 15F, FontStyle.Regular, GraphicsUnit.Point);
-            PayLab.Location = new Point(296, 48);
+            PayLab.Location = new Point(550, 102);
+            PayLab.Margin = new Padding(6, 0, 6, 0);
             PayLab.Name = "PayLab";
-            PayLab.Size = new Size(106, 28);
+            PayLab.Size = new Size(216, 54);
             PayLab.TabIndex = 5;
             PayLab.Text = "Abrechnen";
-            PayLab.Click += PayLab_Click;
             // 
             // AmountLab
             // 
             AmountLab.AutoSize = true;
             AmountLab.Font = new Font("Segoe UI", 15F, FontStyle.Regular, GraphicsUnit.Point);
-            AmountLab.Location = new Point(554, 57);
+            AmountLab.Location = new Point(1029, 122);
+            AmountLab.Margin = new Padding(6, 0, 6, 0);
             AmountLab.Name = "AmountLab";
-            AmountLab.Size = new Size(69, 28);
+            AmountLab.Size = new Size(139, 54);
             AmountLab.TabIndex = 6;
             AmountLab.Text = "Betrag";
             // 
@@ -120,49 +126,54 @@
             // 
             TipLab.AutoSize = true;
             TipLab.Font = new Font("Segoe UI", 15F, FontStyle.Regular, GraphicsUnit.Point);
-            TipLab.Location = new Point(554, 97);
+            TipLab.Location = new Point(1029, 263);
+            TipLab.Margin = new Padding(6, 0, 6, 0);
             TipLab.Name = "TipLab";
-            TipLab.Size = new Size(92, 28);
+            TipLab.Size = new Size(187, 54);
             TipLab.TabIndex = 7;
             TipLab.Text = "Trinkgeld";
             // 
             // TipTxtBox
             // 
-            TipTxtBox.Location = new Point(659, 102);
+            TipTxtBox.Location = new Point(1224, 274);
+            TipTxtBox.Margin = new Padding(6);
             TipTxtBox.Name = "TipTxtBox";
-            TipTxtBox.Size = new Size(129, 23);
+            TipTxtBox.Size = new Size(236, 39);
             TipTxtBox.TabIndex = 9;
             // 
             // AmountTxtBox
             // 
-            AmountTxtBox.Location = new Point(659, 62);
+            AmountTxtBox.Location = new Point(1224, 132);
+            AmountTxtBox.Margin = new Padding(6);
             AmountTxtBox.Name = "AmountTxtBox";
-            AmountTxtBox.Size = new Size(129, 23);
+            AmountTxtBox.Size = new Size(236, 39);
             AmountTxtBox.TabIndex = 8;
-            AmountTxtBox.TextChanged += textBox1_TextChanged;
             // 
             // PayedLab
             // 
             PayedLab.AutoSize = true;
             PayedLab.Font = new Font("Segoe UI", 15F, FontStyle.Regular, GraphicsUnit.Point);
-            PayedLab.Location = new Point(554, 137);
+            PayedLab.Location = new Point(1029, 184);
+            PayedLab.Margin = new Padding(6, 0, 6, 0);
             PayedLab.Name = "PayedLab";
-            PayedLab.Size = new Size(91, 28);
+            PayedLab.Size = new Size(184, 54);
             PayedLab.TabIndex = 10;
             PayedLab.Text = "Gegeben";
             // 
             // PayedTxtBox
             // 
-            PayedTxtBox.Location = new Point(659, 145);
+            PayedTxtBox.Location = new Point(1224, 201);
+            PayedTxtBox.Margin = new Padding(6);
             PayedTxtBox.Name = "PayedTxtBox";
-            PayedTxtBox.Size = new Size(129, 23);
+            PayedTxtBox.Size = new Size(236, 39);
             PayedTxtBox.TabIndex = 11;
             // 
             // BackBtn
             // 
-            BackBtn.Location = new Point(12, 12);
+            BackBtn.Location = new Point(22, 26);
+            BackBtn.Margin = new Padding(6);
             BackBtn.Name = "BackBtn";
-            BackBtn.Size = new Size(75, 23);
+            BackBtn.Size = new Size(139, 49);
             BackBtn.TabIndex = 12;
             BackBtn.Text = "Zurück";
             BackBtn.UseVisualStyleBackColor = true;
@@ -170,9 +181,9 @@
             // 
             // SplitBillView
             // 
-            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleDimensions = new SizeF(13F, 32F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
+            ClientSize = new Size(1486, 960);
             Controls.Add(BackBtn);
             Controls.Add(PayedTxtBox);
             Controls.Add(PayedLab);
@@ -186,6 +197,7 @@
             Controls.Add(PayListBox);
             Controls.Add(OrderListBox);
             Controls.Add(PrintBtn);
+            Margin = new Padding(6);
             Name = "SplitBillView";
             Text = "Getrennt zahlen";
             ResumeLayout(false);

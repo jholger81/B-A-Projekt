@@ -15,10 +15,12 @@ namespace B_A_Software
     public partial class TogetherBillView : Form
     {
         List<MenüItem> Warenkorb = new List<MenüItem>();
-        public TogetherBillView(List<MenüItem> Waren)
+        int tischnummer_;
+        public TogetherBillView(List<MenüItem> Waren, int tischnummer)
         {
             this.Warenkorb = Waren;
             InitializeComponent();
+            tischnummer_ = tischnummer;
         }
 
         private void listView1_SelectedIndexChanged(object sender, EventArgs e)
@@ -33,7 +35,7 @@ namespace B_A_Software
 
         private void BackBtn_Click(object sender, EventArgs e)
         {
-            BillView billview = new BillView(Warenkorb);
+            BillView billview = new BillView(Warenkorb, tischnummer_);
 
             this.Hide();
 

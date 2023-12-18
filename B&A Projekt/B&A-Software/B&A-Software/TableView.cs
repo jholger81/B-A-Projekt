@@ -108,7 +108,7 @@ namespace B_A_Software
         private void OrderBtn_Click(object sender, EventArgs e)
         {
             this.Hide();
-            new OrderView(tischnummer_).ShowDialog();
+            new OrderView(tischnummer_, Warenkorb).ShowDialog();
         }
 
         private void TableSwapBtn_Click(object sender, EventArgs e)

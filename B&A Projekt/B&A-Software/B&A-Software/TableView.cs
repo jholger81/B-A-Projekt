@@ -126,7 +126,9 @@ namespace B_A_Software
         private void BackBtn_Click(object sender, EventArgs e)
         {
             this.Hide();
-            new TableSelect(tischnummer_, Warenkorb).ShowDialog();
+            int bereich;
+            bereich = ((tischnummer_ -1) / 5)+1;
+            new TableSelect(bereich, Warenkorb).ShowDialog();
         }
 
         private void EmptyTableBtn_Click(object sender, EventArgs e)

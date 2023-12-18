@@ -16,15 +16,17 @@ namespace B_A_Software
     {
         string strTemp = @$"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={Directory.GetCurrentDirectory()}\B&A_DB.accdb";
         List<MenüItem> Warenkorb = new List<MenüItem>();
+        List<MenüItem> WarenkorbBisher = new List<MenüItem>();
         List<MenüItem> speisenListe = new List<MenüItem>();
         int tischnummer_;
-        public OrderView(int tischnummer)
+        public OrderView(int tischnummer, List<MenüItem> Waren)
         {
             InitializeComponent();
             FoodListBox.SelectedIndexChanged += (sender, EventArgs) => { FoodListBox_SelectedIndexChanged(sender, EventArgs, connection); };
             LoadFood();
             LoadDrinks();
             tischnummer_ = tischnummer;
+            WarenkorbBisher = Waren;
         }
 
         private void LoadFood()
@@ -177,7 +179,8 @@ namespace B_A_Software
                 }
             }
             this.Hide();
-            new TableView(tischnummer_, Warenkorb).ShowDialog();
+            WarenkorbBisher.AddRange(Warenkorb);
+            new TableView(tischnummer_, WarenkorbBisher).ShowDialog();
         }
 
         private void FoodListBox_SelectedIndexChanged(object sender, EventArgs e, OleDbConnection connection)

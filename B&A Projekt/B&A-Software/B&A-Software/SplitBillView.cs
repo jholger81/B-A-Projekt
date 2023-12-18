@@ -134,21 +134,24 @@ namespace B_A_Software
             string stringToPrint = "";
             string header = "Rechnung\r\n\r\n\n";
             stringToPrint += $"Datum: {DateTime.Now.ToString()}\r\n";
-            stringToPrint += $"Tisch: dummy\r\n";
-            // TODO : implementieren
+            stringToPrint += $"Tisch: {tischnummer_}\r\n";
 
-            //var billedItems = notpayed.selledItems;
+            List<MenüItem> menuitems = new List<MenüItem>();
+            foreach (var item in PayListBox.Items)
+            {
+                var item_ = GetMenuItemFromString((string)item);
+                menuitems.Add(item_);
+            }
 
-            //foreach (var item in billedItems)
-            //{
-            //    stringToPrint += $"{item.ToString()}\r\n";
-            //}
+            //double gesamtbetrag = 0.0;
+            foreach (var item in menuitems)
+            {
+                stringToPrint += $"{item.Preis} € - {item.Speisenname}\r\n";
+                //gesamtbetrag += Convert.ToDouble(item.Preis);
+            }
 
-            //stringToPrint += $"\r\nZu begleichender Betrag: {inttopayinCent / 100}€";
-            //stringToPrint += $"\r\nBezahlter Betrag:{rtbmoneygive.Text}€";
-
-            stringToPrint += $"\r\nZu bezahlender Betrag: Dummy €";
-            stringToPrint += $"\r\nBezahlter Betrag: Dummy €";
+            stringToPrint += $"\r\nZu bezahlender Betrag: {AmountTxtBox.Text} €";
+            stringToPrint += $"\r\nBezahlter Betrag: {PayedTxtBox.Text} €";
 
             docToPrint.PrintPage += delegate (object sender1, PrintPageEventArgs e1)
             {

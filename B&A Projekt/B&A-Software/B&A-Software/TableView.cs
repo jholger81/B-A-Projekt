@@ -114,7 +114,7 @@ namespace B_A_Software
         private void TableSwapBtn_Click(object sender, EventArgs e)
         {
             this.Hide();
-            new TableSwap().ShowDialog();
+            new TableSwap(tischnummer_, Warenkorb).ShowDialog();
         }
 
         private void BillBtn_Click(object sender, EventArgs e)

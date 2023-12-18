@@ -69,7 +69,7 @@ namespace B_A_Software
             {
                 List<MenüItem> speisenListeLocal = new List<MenüItem>();
 
-                    dataConnection.Open();
+                dataConnection.Open();
 
                 using (OleDbCommand dataCommand = dataConnection.CreateCommand())
                 {
@@ -107,7 +107,6 @@ namespace B_A_Software
                 PayListBox.Items.Add(selectedText);
                 OrderListBox.Items.RemoveAt(OrderListBox.SelectedIndex);
             }
-            // TODO : Betrag berechnen anhand von PayListBox
             double betrag = 0.0;
             foreach (string item in PayListBox.Items)
             {
@@ -182,9 +181,41 @@ namespace B_A_Software
             using (OleDbConnection dataConnection = new OleDbConnection(strTemp))
             {
                 dataConnection.Open();
+                int rechnungID;
+
+                // Einfügen in Rechnung
+                using (OleDbCommand dataCommand = dataConnection.CreateCommand())
+                {
+                    dataCommand.Connection = dataConnection;
+                    DateTime theDate = DateTime.Now;
+
+                    dataCommand.CommandText = @$"
+                            INSERT INTO Rechnung(
+                                Trinkgeld,
+                                Betrag,
+                                Datum,
+                                MitarbeiterID)
+                            VALUES(
+                                @trinkgeld,
+                                @betrag,
+                                @mydate,
+                                @mitarbeiterID);";
+                    double trinkgeld = Convert.ToDouble(TipTxtBox.Text) * 1.0;
+                    double betrag = Convert.ToDouble(AmountTxtBox.Text) * 1.0;
+                    dataCommand.Parameters.AddWithValue("@trinkgeld", trinkgeld);
+                    dataCommand.Parameters.AddWithValue("@betrag", betrag);
+                    dataCommand.Parameters.Add("@mydate", OleDbType.Date).Value = theDate;
+                    dataCommand.Parameters.AddWithValue("@mitarbeiterID", mitarbeiterID);
+                    dataCommand.ExecuteNonQuery();
+
+                    // ID wieder auslesen
+                    dataCommand.Parameters.Clear();
+                    dataCommand.CommandText = "SELECT @@IDENTITY";
+                    rechnungID = Convert.ToInt32(dataCommand.ExecuteScalar());
+                }
+
                 foreach (var item in menuitems)
                 {
-                    int rechnungID;
                     int bestellungID;
 
                     // Erste Bestellung des Tisches mit dem Entsprechenden Menütimem holen
@@ -206,37 +237,12 @@ namespace B_A_Software
                         }
                     }
 
-                    // Einfügen in Rechnung
-                    using (OleDbCommand dataCommand = dataConnection.CreateCommand())
-                    {
-                        dataCommand.Connection = dataConnection;
-                        DateTime theDate = DateTime.Now;
-                        dataCommand.CommandText = @$"
-                            INSERT INTO Rechnung(
-                                Trinkgeld,
-                                Betrag,
-                                Datum,
-                                MitarbeiterID)
-                            VALUES(
-                                {Convert.ToInt32(TipTxtBox.Text)},
-                                {Convert.ToInt32(Convert.ToDouble(AmountTxtBox.Text) * 100)},
-                                @mydate,
-                                {mitarbeiterID});";
-                        dataCommand.Parameters.Add("@mydate", OleDbType.Date).Value = theDate;
-                        dataCommand.ExecuteNonQuery();
-
-                        // ID wieder auslesen
-                        dataCommand.Parameters.Clear();
-                        dataCommand.CommandText = "SELECT @@IDENTITY";
-                        rechnungID = Convert.ToInt32(dataCommand.ExecuteScalar());
-                    }
-
                     // Bestellung updaten
                     using (OleDbCommand dataCommand = dataConnection.CreateCommand())
                     {
                         dataCommand.Connection = dataConnection;
                         dataCommand.CommandText = @$"
-                                UPDATE Bestellung(
+                                UPDATE Bestellung
                                 SET 
                                     Bedient = true, 
                                     RechnungID = {rechnungID}
@@ -245,18 +251,29 @@ namespace B_A_Software
                     }
                 }
                 Warenkorb.Remove(Warenkorb.FirstOrDefault(item => item.MenüItemID == item.MenüItemID));
+                this.Hide();
+                new TableView(tischnummer_, Warenkorb).ShowDialog();
             }
-            // die strings wieder in positionen (bestellungen) umwandeln für den tisch
-            // ==> liste daraus erstellen
-            // foreach item in liste 
-            // daten aus Bestellung löschen und daten in Rechnung eintragen
-            // Warenkorb anpassen
         }
 
         private MenüItem GetMenuItemFromString(string speisenName)
         {
             var speise = speisenliste.FirstOrDefault(x => x.Speisenname == speisenName);
             return speise;
+        }
+
+        private void PayedTxtBox_TextChanged(object sender, EventArgs e)
+        {
+            double betrag;
+            double gegeben;
+            if (Double.TryParse(PayedTxtBox.Text, out gegeben))
+            {
+                if (Double.TryParse(AmountTxtBox.Text, out betrag))
+                {
+                    double trinkgeld = gegeben - betrag;
+                    TipTxtBox.Text = Math.Round(trinkgeld, 2).ToString();
+                }                
+            }
         }
     }
 }

@@ -20,14 +20,8 @@ namespace B_A_Software
 
         private void AreaBtn1_Click(object sender, EventArgs e)
         {
-            TableSelect tableselect = new TableSelect(1, new List<MenüItem>());
-
             this.Hide();
-
-            if (tableselect.ShowDialog() == DialogResult.OK)
-            {
-
-            }
+            new TableSelect(1, new List<MenüItem>()).ShowDialog();
         }
 
         private void AreaBtn2_Click(object sender, EventArgs e)
